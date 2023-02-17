@@ -10,7 +10,7 @@ from rtree import index
 
 
 def overflow(img_dimension, box_dimension, overlap):
-    # Returns number of passes box must make in one direction to cover the image
+    # returns number of passes box must make in one direction to cover the image
     adjusted = box_dimension - overlap
     return (img_dimension//adjusted + int(bool(img_dimension % adjusted)))
 
@@ -22,7 +22,7 @@ def region2polygon(region):  # get the polygon that is wrapped in a region objec
     polygon.class_str = region["region_attributes"]["class"]
     return polygon
 
-# build an rtree over all ploygons (their bounding boxes) in an image
+# build an rtree over all polygons (their bounding boxes) in an image
 def rtree_over_pgons(polygons): # [x1, y1, x2, y2]
     idx = index.Index()
     for pos, polygon in enumerate(polygons):
@@ -49,7 +49,7 @@ def region_maker(polygons):
     regions_dicts = []
     for polygon in polygons:
         xs, ys = polygon.exterior.coords.xy
-        # Convert the tuples to lists and the floats to ints
+        # convert the tuples to lists and the floats to ints
         xs = [int(j) for j in xs]
         ys = [int(j) for j in ys]
         regions_dicts.append({
@@ -89,7 +89,7 @@ class AnnotatedImages:
         dict_key = img_file + str(size)
         return dict_key
 
-    # get the polygons (wrapped by region-object list) of an image
+    # get the region list of an image
     def get_region_list(self, dict_key):
         regions = self.annotation_dict[dict_key]["regions"]
         return regions
@@ -112,7 +112,7 @@ class AnnotatedImages:
         if not os.path.exists(self.new_dir):
             os.makedirs(self.new_dir)
 
-        # main sliding logic
+        # main sliding box logic
         box_w, box_h = bbox_shape
         assert(min(box_w, box_h) > overlap)
         annotation_dict = {}
@@ -123,7 +123,7 @@ class AnnotatedImages:
                 pgon_rtree = rtree_over_pgons(polygons)
                 # load the current image
                 img = io.imread(self.get_path(img_file), pilmode="RGB")
-                # !!!!!!!!!!!!!!!!!!!!!!!!!!!!! debug BEGIN: to plot the image along with all polygons
+                # !!!!!!!!!!!!!!!!!!!!!!!!!!!!! debug BEGIN
                 """
                 plt.figure(figsize=(10, 10))
                 io.imshow(img)
@@ -174,7 +174,7 @@ class AnnotatedImages:
                         io.imsave(new_img_path, new_img)
                         new_img_file_size = os.stat(new_img_path).st_size
                         
-                        # !!!!!!!!!!!!!!!!!!!!!!!!!!!!! debug BEGIN: to plot the image along with all polygons
+                        # !!!!!!!!!!!!!!!!!!!!!!!!!!!!! debug BEGIN
                         '''
                         plt.figure(figsize=(10, 10))
                         io.imshow(new_img)
